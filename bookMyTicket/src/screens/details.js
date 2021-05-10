@@ -15,15 +15,6 @@ export default function Profile() {
 
   const dispatch = useDispatch();
 
-  const { isInitialized } = useAuth()
-
-  if (!isInitialized()) {
-    // not logged in
-    alert('Please login first')
-    window.location.href = '/login'
-    return null
-  }
-
   return (
     <>
       {

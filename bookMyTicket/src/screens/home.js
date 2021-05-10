@@ -60,20 +60,11 @@ export default function Home() {
 
     const [value, setValue] = React.useState('');
 
-    const { getCurrentUsername, isInitialized } = useAuth()
-
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
 
     let filterMovies = movies;
-
-    if (!isInitialized()) {
-        // not logged in
-        alert('Please login first')
-        window.location.href = '/login'
-        return null
-    }
 
     return (
         <>

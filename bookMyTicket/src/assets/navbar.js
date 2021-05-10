@@ -4,7 +4,6 @@ import { Navbar, Nav, Container } from 'react-bootstrap';
 import { useAuth } from "../contexts/AuthContext"
 
 import { Alert } from "react-bootstrap"
-import { LocalDiningOutlined } from '@material-ui/icons';
 
 const Navigation = () => {
 
