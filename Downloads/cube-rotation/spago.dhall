@@ -6,6 +6,7 @@ You can edit this file as you like.
 , dependencies =
   [ "arrays"
   , "console"
+  , "dom-indexed"
   , "effect"
   , "halogen"
   , "halogen-svg-elems"

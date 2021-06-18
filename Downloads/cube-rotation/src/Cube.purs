@@ -1,20 +1,19 @@
 module Cube where
 
+import Data.Tuple
 import Prelude
 
-import Data.Tuple
+import DOM.HTML.Indexed.ButtonType (renderButtonType)
 import Data.Array (mapWithIndex, (!!))
 import Data.Maybe (Maybe(..), fromMaybe)
-
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
 import Halogen.HTML.Elements as HEL
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-
-import Math (cos, sin)
 import Halogen.Svg.Attributes as SA
 import Halogen.Svg.Elements as SE
+import Math (cos, sin)
 
 -- Core Types
 type Distance = Number
@@ -125,7 +124,10 @@ data Query a = Tick a | Other a
 -- Events
 data Action
   = DecAngVelocity Axis
-  | IncAngVelocity Axis
+  | IncAngVelocity Axis 
+  | IncSpeed Axis
+  | DecSpeed Axis
+  | Reverse
 
 
 cubes :: forall query input output m. H.Component Query input output m
@@ -159,6 +161,21 @@ cubes =
                             Z -> c { angVel { za = za + accelerateBy } }
                         )
                     pure unit
+            IncSpeed axis -> H.modify_ \cube -> cube { angVel { 
+                          xa = cube.angVel.xa + accelerateBy, 
+                          ya = cube.angVel.ya + accelerateBy, 
+                          za = cube.angVel.za + accelerateBy 
+                      }}
+            DecSpeed axis -> H.modify_ \cube -> cube { angVel { 
+                    xa = cube.angVel.xa * 0.5,
+                    ya = cube.angVel.ya * 0.5, 
+                    za = cube.angVel.za * 0.5
+                    }}
+            Reverse -> H.modify_ \cube -> cube { angVel { 
+              xa = -cube.angVel.xa, 
+              ya = -cube.angVel.ya, 
+              za= -cube.angVel.za 
+            } }
 
         handleQuery :: forall m a message. Query a -> H.HalogenM State Action () message m (Maybe a)
         handleQuery = case _ of
@@ -171,7 +188,7 @@ cubes =
                   , vertices: rotateShape vertices (anglePerFrame angVel)
                   }
                 newCube = cube
-                  { angVel = dampenAngVelocity angVel
+                  { angVel = angVel
                   , shape = newShape
                   }
             H.put newCube
@@ -224,6 +241,9 @@ renderView state = let
         [ renderButton "rotX++" (IncAngVelocity X)
         , renderButton "rotY++" (IncAngVelocity Y)
         , renderButton "rotZ++" (IncAngVelocity Z)
+        , renderButton "speed++" (IncSpeed X)
+        , renderButton "speed--" (DecSpeed X)
+        , renderButton "reverse" (Reverse)
         ]
         <>
         [ SE.svg
